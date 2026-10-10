@@ -6,7 +6,7 @@ A premium 3D printed stand mount for your Starlink Mini that cradles a USB power
 
 ## Features
 
-- Factory fit stand and battery enclosure combo
+- Factory fit stand and battery mount combo
 - Hexagon venting across the visible panels for airflow
 - Custom bay for a USB battery / power bank (see below)
 - Access areas for the USB ports, LCD display, and power on/off button
@@ -42,7 +42,7 @@ Search for "starlink mini usb c to barrel jack 3ft" or check out the links below
 
 ### Power Bank
 
-This mount is made specifically for this power bank. This enclosure and battery are sized perfectly to
+This mount is made specifically for this power bank. This mount and battery are sized perfectly to
 fit behind the Mini and provide ample power to the unit (72Wh, ~3 hours average use). 
 
 This unit was picked based balancing quality, size, cost, and capacity.
@@ -75,19 +75,30 @@ This unit was picked based balancing quality, size, cost, and capacity.
 
 ## Printing
 
-Recommended settings for the production part (see `cad/design_parameters.json`):
+Recommended settings (taken from the sealed 3MF profiles):
 
-| Setting | Value |
-| --- | --- |
-| Material | ASA |
-| Nozzle | 0.4 mm |
-| Layer height | 0.2 mm |
-| Line width | 0.45 mm |
-| Wall loops | 4 |
+| Setting | Production ASA | Production PLA | Prototype PLA |
+| --- | --- | --- | --- |
+| Material | ELEGOO ASA | PLA | PLA |
+| Nozzle | 0.4 mm | 0.4 mm | 0.4 mm |
+| Layer / first layer height | 0.2 / 0.2 mm | 0.2 / 0.2 mm | 0.2 / 0.2 mm |
+| Wall loops | 5 | 5 | 3 |
+| Outer wall line width | 0.42 mm | 0.42 mm | 0.42 mm |
+| Top / bottom shells | 6 / 6 | 6 / 6 | 3 / 3 |
+| Sparse infill | 25% gyroid | 25% gyroid | 10% grid |
+| Supports | Tree organic, 30° | Tree organic, 30° | Tree organic, 30° |
+| Brim | Outer only, 10 mm | Outer only, 10 mm | Auto, 5 mm |
+| Nozzle temperature | 260 °C | 220 °C | 220 °C |
+| Bed temperature (Textured PEI) | 100 °C | 55 °C | 55 °C |
+| Flow ratio | 0.95 | 0.98 | 0.98 |
+| Max volumetric speed | 8 mm³/s | 12 mm³/s | 12 mm³/s |
+| Fan min / max | 10% / 30% | 100% / 100% | 100% / 100% |
+| Fan off first layers | 3 | 1 | 1 |
+| Outer / inner / sparse speed | 40 / 80 / 90 mm/s | 40 / 80 / 90 mm/s | 80 / 160 / 180 mm/s |
 
-Ready-to-print files are in `export/`. Tuned for Bambu P1S. 
+Elephant foot compensation is 0.15 mm on all three profiles. Production ASA and Production PLA share the same full-strength shell, infill and support strategy; Production PLA simply swaps in PLA thermal, fan and flow values. Prototype PLA trades shell thickness, infill and support for speed so you can check fit before committing filament to ASA.
 
-If you're developing on the model then I recommend printing a PLA prototype first with different settings to increase print time and test fit before committing to 3MF provided settings and ASA.
+Ready-to-print files are in `export/` (`starlink-mini-battery-mount.3mf`), tuned for Bambu P1S. The prototype profile is tracked during development as `PLA_PROTOTYPE.3mf`.
 
 ## Regenerating the model
 
