@@ -73,9 +73,17 @@ This unit was picked based balancing quality, size, cost, and capacity.
   </tr>
 </table>
 
-## Printing
+## Print
 
-Recommended settings (taken from the sealed 3MF profiles):
+* Ready-to-print files are in `export/`
+
+* **Accompanying 3MF file is tuned for Bambu P1S**
+
+* STL can be used with any slicer
+
+* F3D can be used to export a STP/STEP file if needed
+
+### Settings
 
 | Setting | Production ASA | Production PLA | Prototype PLA |
 | --- | --- | --- | --- |
@@ -95,8 +103,6 @@ Recommended settings (taken from the sealed 3MF profiles):
 | Fan min / max | 10% / 30% | 100% / 100% | 100% / 100% |
 | Fan off first layers | 3 | 1 | 1 |
 | Outer / inner / sparse speed | 40 / 80 / 90 mm/s | 40 / 80 / 90 mm/s | 80 / 160 / 180 mm/s |
-
-Ready-to-print files are in `export/` (`starlink-mini-battery-mount.3mf`), **tuned for Bambu P1S**.
 
 ## Regenerating the model
 
