@@ -85,7 +85,7 @@ This unit was picked based balancing quality, size, cost, and capacity.
 
 ### Settings
 
-| Setting | Production ASA | Production PLA | Prototype PLA |
+| Name | Production ASA | Production PLA | Prototype PLA |
 | --- | --- | --- | --- |
 | Material | ELEGOO ASA | PLA | PLA |
 | Nozzle | 0.4 mm | 0.4 mm | 0.4 mm |
