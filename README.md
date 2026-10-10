@@ -55,6 +55,8 @@ This unit was picked based balancing quality, size, cost, and capacity.
 - Model number: 25188
 - Size: 139 x 80.8 x 26.7 mm
 - Watt Hours: 72 Wh
+- USB ports: 2 USB-C, 1 USB-A
+- Passthrough charging: YES
 
 ## Renders
 
@@ -83,7 +85,9 @@ Recommended settings for the production part (see `cad/design_parameters.json`):
 | Line width | 0.45 mm |
 | Wall loops | 4 |
 
-Ready-to-print files live in `export/`. If you're developing on the model then I recommend printing the PLA prototype first and test the fit before committing to the ASA part.
+Ready-to-print files are in `export/`. Tuned for Bambu P1S. 
+
+If you're developing on the model then I recommend printing a PLA prototype first with different settings to increase print time and test fit before committing to 3MF provided settings and ASA.
 
 ## Regenerating the model
 
