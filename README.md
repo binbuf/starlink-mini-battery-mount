@@ -6,12 +6,12 @@ A premium 3D printed stand mount for your Starlink Mini that cradles a USB power
 
 ## Features
 
-- Hexagon venting across the visible panels to keep the power bank cool
-- Fits snuggly into OEM locators
-- Purpose-built bay sized for premium power bank (see below)
-- Access windows for the power port, display and USB-C connections.
-- Tuned for ASA on a 0.4 mm nozzle, with a PLA prototype variant for fit checks.
-- The mount is modeled in [CadQuery](https://cadquery.io/) and mates directly to the official Starlink Mini shell geometry, so the locator nubs, rim profile and clearances line up with the real hardware
+- Factory fit stand and battery enclosure combo
+- Hexagon venting across the visible panels for airflow
+- Custom bay for a USB battery / power bank (see below)
+- Access areas for the USB ports, LCD display, and power on/off button
+- Production model is tuned for ASA on a 0.4 mm nozzle, recommend PLA prototype variant for fit checks or faster printing
+- The mount is modeled in [CadQuery](https://cadquery.io/)
 
 ## Repository layout
 
@@ -27,7 +27,7 @@ A premium 3D printed stand mount for your Starlink Mini that cradles a USB power
 
 ### Starlink Mini
 
-The dish the mount is designed to carry.
+Get a [Starlink Mini](https://starlink.com/) if don't already own it.
 
 ### USB cables
 
