@@ -1,0 +1,181 @@
+{
+  "revision": "v18",
+  "battery_mm": [
+    134.0,
+    82.0,
+    27.0
+  ],
+  "bay_xy_mm": [
+    140.0,
+    83.0
+  ],
+  "battery_center_xy_mm": [
+    0.0,
+    -93.0
+  ],
+  "battery_side_clearance_mm": 0.5,
+  "depth_allowance_mm": 0.0,
+  "floor_thickness_mm": 3.0,
+  "contact_z_mm": -6.4606,
+  "port_cut_y_mm": -29.0,
+  "cage_x_half_mm": 72.7,
+  "cage_rear_y_mm": -140.7,
+  "cage_seam_inset_mm": 0.1,
+  "cage_contact_relief_mm": 0.2,
+  "locator_xy_clearance_mm": 0.12,
+  "locator_tip_clearance_mm": 0.12,
+  "hex_hole_radius_mm": 6.0,
+  "hex_narrow_radius_mm": 3.0,
+  "hex_locator_radius_mm": 4.5,
+  "hex_web_width_mm": 2.7,
+  "vertical_hex_radius_mm": 4.5,
+  "vertical_hex_web_mm": 3.6,
+  "vertical_hex_roof_angle_deg": 45.0,
+  "outer_end_ramp_y_mm": [
+    -147.4,
+    -140.45
+  ],
+  "outer_end_solid_band_top_z_mm": -25.5,
+  "end_corner_return_x_mm": [
+    72.45,
+    75.15
+  ],
+  "panel_edge_rib_mm": 3.6,
+  "shell_panel_thickness_mm": 2.7,
+  "battery_stop_height_mm": 3.0,
+  "battery_stop_thickness_mm": 2.7,
+  "low_battery_walls": [
+    "-Y",
+    "+X",
+    "-X"
+  ],
+  "low_battery_wall_height_mm": 3.0,
+  "front_floor_hex_radius_mm": 4.5,
+  "front_skirt_inward_depth_mm": 7.2,
+  "front_skirt_sides": [
+    -1,
+    1
+  ],
+  "right_fin_return_x_mm": [
+    72.45,
+    75.15
+  ],
+  "right_fin_return_hex_radius_mm": 3.0,
+  "usb_cut_outer_x_mm": -115.0,
+  "usb_corner_radius_mm": 0.0,
+  "battery_port_count": 3,
+  "battery_port_edge_inset_mm": 15.0,
+  "battery_port_end_clearance_mm": 5.0,
+  "port_side_corner_height_mm": 6.0,
+  "reference_rim_bottom_z_mm": -9.8086,
+  "rim_rail_width_mm": 4.0,
+  "protected_contact_depth_mm": 8.0,
+  "support_rail_y_mm": [],
+  "support_rail_width_mm": 0.0,
+  "new_support_step_clearance_z_mm": 0.15,
+  "mating_clearance_z_mm": 0.05,
+  "mating_clearance_axes_mm": 0.1,
+  "battery_port_side": "-X",
+  "battery_port_window_y_mm": [
+    -124.0,
+    -62.0
+  ],
+  "battery_port_window_z_mm": [
+    -30.4606,
+    -18.0
+  ],
+  "mesh_tolerance_mm": 0.015,
+  "print_nozzle_mm": 0.4,
+  "print_layer_height_mm": 0.2,
+  "print_line_width_mm": 0.45,
+  "print_wall_loops": 4,
+  "print_material": "ASA",
+  "attachment_fin_thickness_mm": 4.0,
+  "attachment_frame_wall_mm": 4.0,
+  "clear_full_battery_envelope": true,
+  "panel_pattern_phase_uv_mm": {
+    "front skirt -1": [
+      -25.309693545966272,
+      1.6511578848957023
+    ],
+    "front skirt 1": [
+      25.30969323243876,
+      1.651157884725817
+    ]
+  },
+  "retain_legacy_plate_supports": false,
+  "track_backing_bounds_positive_mm": [
+    [
+      68.8,
+      71.0
+    ],
+    [
+      -53.3,
+      -50.7
+    ],
+    [
+      -22.5,
+      -19.4
+    ]
+  ],
+  "locator_tip_width_mm": 7.28,
+  "locator_tip_thickness_mm": 2.0,
+  "locator_height_mm": 4.35,
+  "locator_root_z_mm": -8.9606,
+  "locator_base_thickness_mm": 3.0,
+  "pattern_floor_only": true,
+  "locator_center_y_mm": -43.1653,
+  "locator_profile": "oem_tapered",
+  "display_access_bounds_mm": [
+    [
+      30.2,
+      61.0
+    ],
+    [
+      -147.6,
+      -143.2
+    ],
+    [
+      -23.9,
+      -14.9
+    ]
+  ],
+  "locator_base_width_mm": 7.68,
+  "locator_center_x_mm": 23.5533,
+  "power_end_access_bounds_mm": [
+    [
+      -49.5,
+      49.5
+    ],
+    [
+      -33.25,
+      -28.8
+    ],
+    [
+      -28.0,
+      -15.5
+    ]
+  ],
+  "locator_recess_size_mm": [
+    24.0,
+    9.0
+  ],
+  "fin_lip_ramp_depth_mm": 3.0,
+  "locator_root_support_height_mm": 1.1,
+  "locator_root_support_span_mm": 2.5,
+  "locator_root_support_style": "joined_short_ends_sloped_long_sides",
+  "locator_release_recess_bounds_mm": [
+    [
+      -10,
+      10
+    ],
+    [
+      -37,
+      -26
+    ],
+    [
+      -8.6106,
+      2
+    ]
+  ]
+}

@@ -1,0 +1,11 @@
+cad/.venv/
+**/__pycache__/
+*.pyc
+
+# Rebuildable CAD exports, mesh caches, screenshots, and diagnostic logs.
+cad/out/
+cad/review/
+
+.codex/
+opencode*
+
