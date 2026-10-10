@@ -28,6 +28,14 @@ def inspect(mount):
         if P.get('locator_release_recess_bounds_mm'):
             from prototype_feedback import release_recess_tool
             allowed = allowed+solid(mesh_shape(release_recess_tool()))
+        # Later authorized cleanup also moves P10 and removes internal ledges.
+        if P.get('remove_internal_rim_lips'):
+            from internal_rim_cleanup import cutters, inward_planes_from_mesh
+            cleanup_tools = cutters(P, inward_planes_from_mesh(mount))
+            allowed = allowed + cleanup_tools[0] + cleanup_tools[1]
+            (a, b), (y0, y1), (z0, z1) = P['display_access_bounds_mm']
+            for x0, x1 in ((a, b), (-b, -a)):
+                allowed = allowed + solid(mesh_shape(box(x0-.02, x1+.02, y0-.02, y1+.02, z0-.02, z1+.02)))
         outside = abs(float((changes-allowed).volume()))
         assert outside < .01, 'Geometry changed outside the authorized local regions'
         result['reinforcement_change'] = {
@@ -128,19 +136,31 @@ def inspect(mount):
                      'locator_only_withdrawal': sweep})
     result['locators'] = nubs
     # The source lip remains. Ramps add material underneath it, outside the bay.
-    ramp_region = solid(mesh_shape(box(-105, -75, -148, -62, -14, -9.75)))
-    ramp_region += solid(mesh_shape(box(75, 105, -148, -62, -14, -9.75)))
-    added = current-old
-    ramp_material = added^ramp_region
-    assert ramp_material.volume() > 100, 'Lip underside ramps were not delivered'
-    change = ramp_material.to_mesh64()
-    ramps = trimesh.Trimesh(change.vert_properties[:, :3], change.tri_verts, process=True)
-    down = ramps.face_normals[:, 2] < -.4
-    area = float(ramps.area_faces[down & (np.abs(ramps.face_normals[:, 2]+np.sqrt(.5)) < .001)].sum())
-    assert area > 50, '45-degree lip ramp undersides are missing'
-    result['lip_ramps'] = {'added_local_volume_mm3': float(ramp_material.volume()),
-                           'measured_45_degree_underside_area_mm2': area,
-                           'remaining_supports': 'Broad fin undersides and rectangular-window roofs.'}
+    if P.get('fin_lip_ramp_depth_mm', 0):
+        ramp_region = solid(mesh_shape(box(-105, -75, -148, -62, -14, -9.75)))
+        ramp_region += solid(mesh_shape(box(75, 105, -148, -62, -14, -9.75)))
+        added = current-old
+        ramp_material = added^ramp_region
+        assert ramp_material.volume() > 100, 'Lip underside ramps were not delivered'
+        change = ramp_material.to_mesh64()
+        ramps = trimesh.Trimesh(change.vert_properties[:, :3], change.tri_verts, process=True)
+        down = ramps.face_normals[:, 2] < -.4
+        area = float(ramps.area_faces[down & (np.abs(ramps.face_normals[:, 2]+np.sqrt(.5)) < .001)].sum())
+        assert area > 50, '45-degree lip ramp undersides are missing'
+        result['lip_ramps'] = {'added_local_volume_mm3': float(ramp_material.volume()),
+                               'measured_45_degree_underside_area_mm2': area,
+                               'remaining_supports': 'Broad fin undersides and rectangular-window roofs.'}
+    else:
+        result['lip_ramps'] = {'enabled': False, 'reason': 'Obsolete internal side ledges removed.'}
+    if P.get('remove_internal_rim_lips'):
+        from internal_rim_cleanup import cutters, inward_planes_from_mesh
+        cleanup_tools = cutters(P, inward_planes_from_mesh(mount))
+        planes = inward_planes_from_mesh(mount)
+        probes = [tool.trim_by_plane(normal.tolist(), float(np.dot(normal, point))+.0002)
+                  for tool, (_, normal, point) in zip(cleanup_tools, planes)]
+        obstruction = abs(float((current ^ (probes[0]+probes[1])).volume()))
+        assert obstruction < .05, 'Internal side lips remain inside the cleanup envelope'
+        result['internal_rim_cleanup'] = {'remaining_internal_material_mm3': obstruction}
     audit = json.loads((OUT/('mount_'+P['revision']+'_validation.json')).read_text())
     assert all(p['whole_hexagons'] == 0 for p in audit['panel_patterns']
                if not p['panel'].startswith('floor'))

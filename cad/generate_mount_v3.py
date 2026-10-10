@@ -489,11 +489,17 @@ def run(export_step=True):
     if P.get('track_backing_bounds_positive_mm'):
         from track_backing import make as make_track_backing, join as join_track_backing
         final=join_track_backing(final,make_track_backing(precise,official))
+    if P.get('remove_internal_rim_lips'):
+        from internal_rim_cleanup import remove as remove_internal_rim
+        inward_planes = [(sign, -normal, point-fin_wall*normal)
+                         for sign, normal, point in planes]
+        final = remove_internal_rim(final, P, inward_planes)
     final.export(OUT/(stem+'_debug_raw.stl'))
     print('Components',[(len(p.faces),round(p.volume,5),p.bounds.tolist()) for p in final.split(
         only_watertight=False)],flush=True)
     assert_mesh(final,'complete-cell hexagonal shell')
-    final.export(OUT/(stem+'.stl'))
+    final.export(OUT/(stem+'.stl'),
+                 file_type='stl_ascii' if P.get('remove_internal_rim_lips') else 'stl')
     validation={}
     for name,target in [('battery',mesh_shape(battery)),('official_stl',official),('step_precise_mesh',precise)]:
         common=intersection(final,target)

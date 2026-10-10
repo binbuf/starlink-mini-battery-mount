@@ -1,6 +1,8 @@
-# starlink-mini-battery-mount
+# Starlink Mini Battery Mount
 
-A premium 3D printed stand mount for your Starlink Mini that cradles a USB-C power bank.
+A premium 3D printed stand mount for your Starlink Mini that cradles a USB power bank.
+
+<img src="docs/images/render-07.png" alt="Assembled mount render 2" width="320">
 
 ## Features
 
@@ -40,8 +42,10 @@ Search for "starlink mini usb c to barrel jack 3ft" or check out the links below
 
 ### Power Bank
 
-This 3D model is made specifically for this power bank. It's sized perfectly to
-fit behind the Mini and provide ample power to the unit.
+This mount is made specifically for this power bank. This enclosure and battery are sized perfectly to
+fit behind the Mini and provide ample power to the unit (72Wh, ~3 hours average use). 
+
+This unit was picked based balancing quality, size, cost, and capacity.
 
 [UGREEN Nexode 100W 20000mAh Power Bank](https://www.amazon.com/dp/B0C3GTMX5M)
 
@@ -50,6 +54,22 @@ fit behind the Mini and provide ample power to the unit.
 - Model name: PB720
 - Model number: 25188
 - Size: 139 x 80.8 x 26.7 mm
+- Watt Hours: 72 Wh
+
+## Renders
+
+<table>
+  <tr>
+    <td><img src="docs/images/render-01.png" alt="Enclosure render 1" width="320"></td>
+    <td><img src="docs/images/render-02.png" alt="Enclosure render 2" width="320"></td>
+    <td><img src="docs/images/render-03.png" alt="Enclosure render 3" width="320"></td>
+  </tr>
+  <tr>
+    <td><img src="docs/images/render-04.png" alt="Enclosure with power bank render 1" width="320"></td>
+    <td><img src="docs/images/render-05.png" alt="Enclosure with power bank render 2" width="320"></td>
+    <td><img src="docs/images/render-06.png" alt="Assembled mount render 1" width="320"></td>
+  </tr>
+</table>
 
 ## Printing
 
@@ -83,4 +103,12 @@ generated solid stays watertight and matches the mated geometry.
 
 ## License
 
-MIT
+Released under the [MIT License](LICENSE).
+
+You are free to use, copy, modify, merge, publish, distribute, sublicense and
+sell this software and its associated design files. The only requirement is
+that the copyright notice and permission notice are included in all copies or
+substantial portions. The software is provided "as is", without warranty of any
+kind.
+
+Copyright (c) 2026 binbuf.

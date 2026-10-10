@@ -128,8 +128,8 @@
   "locator_profile": "oem_tapered",
   "display_access_bounds_mm": [
     [
-      30.2,
-      61.0
+      -61.0,
+      -30.2
     ],
     [
       -147.6,
@@ -160,7 +160,7 @@
     24.0,
     9.0
   ],
-  "fin_lip_ramp_depth_mm": 3.0,
+  "fin_lip_ramp_depth_mm": 0.0,
   "locator_root_support_height_mm": 1.1,
   "locator_root_support_span_mm": 2.5,
   "locator_root_support_style": "joined_short_ends_sloped_long_sides",
@@ -177,5 +177,57 @@
       -8.6106,
       2
     ]
-  ]
+  ],
+  "remove_internal_rim_lips": true,
+  "internal_rim_cleanup_outer_xy_mm": [
+    [
+      -100,
+      -147.4
+    ],
+    [
+      100,
+      -147.4
+    ],
+    [
+      100,
+      -104.21614
+    ],
+    [
+      83.1371,
+      -75.9296
+    ],
+    [
+      80.0445,
+      -58.5258
+    ],
+    [
+      62.3824,
+      -29
+    ],
+    [
+      -62.3824,
+      -29
+    ],
+    [
+      -80.0445,
+      -58.5258
+    ],
+    [
+      -83.1371,
+      -75.9296
+    ],
+    [
+      -100,
+      -104.21614
+    ]
+  ],
+  "internal_rim_cleanup_y_mm": [
+    -143.4,
+    -59.5
+  ],
+  "internal_rim_cleanup_z_mm": [
+    -20.0,
+    2.0
+  ],
+  "internal_rim_cleanup_min_abs_x_mm": 75.0
 }
