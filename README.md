@@ -96,9 +96,7 @@ Recommended settings (taken from the sealed 3MF profiles):
 | Fan off first layers | 3 | 1 | 1 |
 | Outer / inner / sparse speed | 40 / 80 / 90 mm/s | 40 / 80 / 90 mm/s | 80 / 160 / 180 mm/s |
 
-Elephant foot compensation is 0.15 mm on all three profiles. Production ASA and Production PLA share the same full-strength shell, infill and support strategy; Production PLA simply swaps in PLA thermal, fan and flow values. Prototype PLA trades shell thickness, infill and support for speed so you can check fit before committing filament to ASA.
-
-Ready-to-print files are in `export/` (`starlink-mini-battery-mount.3mf`), tuned for Bambu P1S. The prototype profile is tracked during development as `PLA_PROTOTYPE.3mf`.
+Ready-to-print files are in `export/` (`starlink-mini-battery-mount.3mf`), **tuned for Bambu P1S**.
 
 ## Regenerating the model
 
