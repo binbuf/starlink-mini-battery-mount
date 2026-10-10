@@ -11,7 +11,7 @@ A premium 3D printed stand mount for your Starlink Mini that cradles a USB power
 - Custom bay for a USB battery / power bank (see below)
 - Access areas for the USB ports, LCD display, and power on/off button
 - Production model is tuned for ASA on a 0.4 mm nozzle, recommend PLA prototype variant for fit checks or faster printing
-- The mount is modeled in [CadQuery](https://cadquery.io/)
+- The mount is modeled in [CadQuery](https://cadquery.readthedocs.io/en/latest/)
 
 ## Repository layout
 
