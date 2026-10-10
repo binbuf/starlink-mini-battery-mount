@@ -30,9 +30,25 @@ def inspect(mount):
             allowed = allowed+solid(mesh_shape(release_recess_tool()))
         # Later authorized cleanup also moves P10 and removes internal ledges.
         if P.get('remove_internal_rim_lips'):
-            from internal_rim_cleanup import cutters, inward_planes_from_mesh
+            from internal_rim_cleanup import cutters, inward_planes_from_mesh, front_wall_tools
             cleanup_tools = cutters(P, inward_planes_from_mesh(mount))
             allowed = allowed + cleanup_tools[0] + cleanup_tools[1]
+            front_cut, front_fills = front_wall_tools(P)
+            if front_cut is not None:
+                allowed = allowed + front_cut
+                for fill in front_fills:
+                    allowed = allowed + fill
+            from surface_detail_cleanup import all_fills
+            for fill in all_fills(P):
+                allowed = allowed + fill
+            from lower_side_cleanup import interior_tools
+            fills, cuts = interior_tools(P, inward_planes_from_mesh(mount))
+            for tool in fills + cuts:
+                allowed = allowed + tool
+            from front_wall_cleanup import tools as front_square_tools
+            fills, cuts = front_square_tools(P, inward_planes_from_mesh(mount))
+            for tool in fills + cuts:
+                allowed = allowed + tool
             (a, b), (y0, y1), (z0, z1) = P['display_access_bounds_mm']
             for x0, x1 in ((a, b), (-b, -a)):
                 allowed = allowed + solid(mesh_shape(box(x0-.02, x1+.02, y0-.02, y1+.02, z0-.02, z1+.02)))
@@ -161,6 +177,47 @@ def inspect(mount):
         obstruction = abs(float((current ^ (probes[0]+probes[1])).volume()))
         assert obstruction < .05, 'Internal side lips remain inside the cleanup envelope'
         result['internal_rim_cleanup'] = {'remaining_internal_material_mm3': obstruction}
+        from internal_rim_cleanup import front_wall_tools
+        front_cut, _ = front_wall_tools(P)
+        if front_cut is not None:
+            obstruction = abs(float((current ^ front_cut).volume()))
+            assert obstruction < .05, 'Front wall step remains inside the cleanup envelope'
+            result['internal_front_wall_cleanup'] = {'remaining_internal_material_mm3': obstruction}
+        from surface_detail_cleanup import edge_trench_fills
+        missing = sum(abs(float((fill-current).volume())) for fill in edge_trench_fills(P))
+        assert missing < .05, 'Locator plate edge trenches remain unfilled'
+        result['locator_edge_trench_cleanup'] = {'missing_fill_mm3': missing}
+        from surface_detail_cleanup import right_bottom_fill
+        bottom_fill = right_bottom_fill(P)
+        if bottom_fill is not None:
+            missing = abs(float((bottom_fill-current).volume()))
+            assert missing < .05, 'Right bottom rectangular setback remains unfilled'
+            result['right_bottom_recess_cleanup'] = {'missing_fill_mm3': missing}
+        if P.get('lower_interior_blend') and not P.get('square_lower_front_wall'):
+            from lower_side_cleanup import exterior_fill, interior_tools
+            fills, cuts = interior_tools(P, planes)
+            combined_cut = cuts[0]
+            for cut in cuts[1:]:
+                combined_cut += cut
+            obstruction = abs(float((current ^ combined_cut).volume()))
+            missing = sum(abs(float(((fill-current)-combined_cut).volume()))
+                          for fill in fills + [exterior_fill(P)])
+            assert obstruction < .05, 'Lower interior terraces remain'
+            assert missing < .05, 'Lower wall blends are incomplete'
+            result['lower_wall_cleanup'] = {
+                'remaining_terrace_material_mm3': obstruction,
+                'missing_blend_material_mm3': missing}
+        if P.get('square_lower_front_wall'):
+            from front_wall_cleanup import tools as front_square_tools
+            fills, cuts = front_square_tools(P, planes)
+            obstruction = abs(float((current ^ cuts[0]).volume()))
+            missing = sum(abs(float(((fill-current)-cuts[0]).volume()))
+                          for fill in fills)
+            assert obstruction < .05, 'Lower front wall is not vertical'
+            assert missing < .05, 'Square front wall or floor is incomplete'
+            result['square_lower_front_wall'] = {
+                'remaining_interior_material_mm3': obstruction,
+                'missing_wall_or_floor_mm3': missing}
     audit = json.loads((OUT/('mount_'+P['revision']+'_validation.json')).read_text())
     assert all(p['whole_hexagons'] == 0 for p in audit['panel_patterns']
                if not p['panel'].startswith('floor'))

@@ -105,6 +105,16 @@ python package_mount_v18.py   # publish verified outputs into export/
 Validation scripts in `cad/` (for example `validate_mount.py`) assert that the
 generated solid stays watertight and matches the mated geometry.
 
+### Regenerating renders
+
+With Fusion running and its MCP add-in enabled, have the design open in curren tab and run
+these commands from the project root:
+
+```sh
+pip install Pillow
+python cad/render_readme.py
+```
+
 ## License
 
 Released under the [MIT License](LICENSE).

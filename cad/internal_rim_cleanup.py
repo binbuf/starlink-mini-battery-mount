@@ -21,12 +21,16 @@ def inward_planes_from_mesh(mesh):
                     & (sign*normals[:,0] < -.3))
         ids = max((f for f in mesh.facets if selected[f].any()),
                   key=lambda f: mesh.area_faces[f].sum())
-        planes.append((sign, normals[ids[0]], mesh.triangles[ids[0],0]))
+        # Boolean seams can put a tiny, poorly conditioned triangle first in
+        # a large planar facet. Use its largest triangle to measure the plane.
+        face = ids[np.argmax(mesh.area_faces[ids])]
+        planes.append((sign, normals[face], mesh.triangles[face,0]))
     return planes
 
 def cutters(parameters, inward_planes):
     profile = Polygon(parameters['internal_rim_cleanup_outer_xy_mm'])
-    cavity = profile.buffer(-parameters['attachment_frame_wall_mm'], join_style='mitre')
+    wall = parameters.get('internal_rim_cleanup_wall_mm', parameters['attachment_frame_wall_mm'])
+    cavity = profile.buffer(-wall, join_style='mitre')
     y0, y1 = parameters['internal_rim_cleanup_y_mm']
     z0, z1 = parameters['internal_rim_cleanup_z_mm']
     min_x = parameters['internal_rim_cleanup_min_abs_x_mm']
@@ -43,10 +47,33 @@ def cutters(parameters, inward_planes):
         results.append(cut)
     return results
 
+def front_wall_tools(parameters):
+    """Flatten the inward front-wall step and fill its obsolete shallow grooves."""
+    spec = parameters.get('internal_front_wall_cleanup')
+    if not spec:
+        return None, []
+    def cuboid(bounds):
+        lo, hi = np.asarray(bounds, dtype=float).T
+        return mf.Manifold.cube(hi-lo).translate(lo)
+    cut = cuboid(spec['trim_bounds_mm'])
+    fills = [cuboid(bounds) for bounds in spec['groove_fill_bounds_mm']]
+    return cut, fills
+
+def flatten_front_wall(result, parameters):
+    front_cut, front_fills = front_wall_tools(parameters)
+    if front_cut is not None:
+        for fill in front_fills:
+            result += fill
+        result -= front_cut
+    return result
+
 def remove(mesh, parameters, inward_planes):
     result = as_solid(mesh)
     for cutter in cutters(parameters, inward_planes):
         result -= cutter
+    result = flatten_front_wall(result, parameters)
+    from surface_detail_cleanup import apply as clean_surface_details
+    result = clean_surface_details(result, parameters)
     raw = result.to_mesh64()
     output = trimesh.Trimesh(raw.vert_properties[:,:3], raw.tri_verts, process=True)
     components = output.split(only_watertight=False)
