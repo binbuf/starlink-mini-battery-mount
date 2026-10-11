@@ -35,6 +35,10 @@ def all_fills(parameters):
     lower = exterior_fill(parameters)
     if lower is not None:
         fills.append(lower)
+    from hex_ridge_divider import solid as divider_solid
+    divider = divider_solid(parameters)
+    if divider is not None:
+        fills.append(divider)
     return fills
 
 
@@ -43,4 +47,9 @@ def apply(result, parameters):
         result += fill
     from lower_side_cleanup import blend_interior
     from front_wall_cleanup import apply as square_front_wall
-    return square_front_wall(blend_interior(result, parameters), parameters)
+    from p02_continuous_floor import apply as extend_floor_pattern
+    result = square_front_wall(blend_interior(result, parameters), parameters)
+    result = extend_floor_pattern(result, parameters)
+    from p15_wall_growth import solid as grow_right_lip
+    growth = grow_right_lip(parameters)
+    return result + growth if growth is not None else result

@@ -110,5 +110,9 @@ def apply(shape,parameters):
         shape-=wall
     for wall in p11_upper_wall_tools(parameters):
         shape-=wall
+    # The seat cuts overlap the release-web shoulders. Restore backing below
+    # those seats after cutting, preserving the pocket floors and nub profiles.
+    from locator_bridge_backing import apply as back_nub_seats
+    shape = back_nub_seats(shape, parameters)
     assert shape.status()==mf.Error.NoError
     return shape
