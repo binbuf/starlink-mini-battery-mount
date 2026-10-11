@@ -61,7 +61,7 @@ This unit was picked based balancing quality, size, cost, and capacity.
 
 #### What if I want to use a different USB power bank?
 
-Scripts are included that produce the model and a Autodesk Fusion 360 *.f3d file are provided to make it easy to get started contributing to make changes such as battery bay size or overall dimensions/geometry. Don't forget to share your fork/remix!
+This project is built to be extendable. Scripts are included that produce the model and a Autodesk Fusion 360 *.f3d file are provided. This should make it easier to get started contributing. Changes such as battery bay size or overall dimensions/geometry are possible. If you do make something new share your fork/remix!
 
 ## Renders
 
@@ -80,13 +80,10 @@ Scripts are included that produce the model and a Autodesk Fusion 360 *.f3d file
 
 ## Print
 
-* Ready-to-print files are in `export/`
-
-* **Accompanying 3MF file is tuned for Bambu P1S**
-
-* STL can be used with any slicer
-
-* F3D can be used to export a STP/STEP file if needed
+- Ready-to-print files are in `export/`
+- **Accompanying 3MF file is tuned for Bambu P1S**
+- STL can be used with any slicer
+- F3D can be used to export a STP/STEP file if needed
 
 ### Settings
 
