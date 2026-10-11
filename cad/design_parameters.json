@@ -682,7 +682,7 @@
       -15.50001,
       -11.0
     ],
-    "end_radius_mm": 1.5,
+    "end_radius_mm": 0.0,
     "scope": "Upper P11 only; P19 plate and nubs preserved",
     "approximate_corner_land_mm": 8.38
   }

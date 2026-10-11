@@ -47,7 +47,8 @@ def p11_upper_wall_tools(parameters):
                      if abs(edge.Center().x-sign*spec['outer_x_mm'])<1e-6
                      and abs(edge.Length()-(y1-y0))<1e-6]
         assert len(outer_edges)==2
-        cutter=cutter.fillet(spec['end_radius_mm'],outer_edges)
+        if spec['end_radius_mm']>0:
+            cutter=cutter.fillet(spec['end_radius_mm'],outer_edges)
         result.append(mesh_solid(cutter,parameters['mesh_tolerance_mm']))
     return result
 
