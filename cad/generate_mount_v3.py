@@ -494,6 +494,10 @@ def run(export_step=True):
         inward_planes = [(sign, -normal, point-fin_wall*normal)
                          for sign, normal, point in planes]
         final = remove_internal_rim(final, P, inward_planes)
+    if P.get('access_feedback_update'):
+        from access_feedback import apply as apply_access_feedback
+        # Wall cleanup can fill parts of apertures; reapply access cuts last.
+        final = apply_access_feedback(final, P)
     final.export(OUT/(stem+'_debug_raw.stl'))
     print('Components',[(len(p.faces),round(p.volume,5),p.bounds.tolist()) for p in final.split(
         only_watertight=False)],flush=True)

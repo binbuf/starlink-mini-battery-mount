@@ -23,11 +23,32 @@ def inspect(mount):
             x, y = locator_coordinates(sign)
             region = solid(mesh_shape(box(x-5, x+5, y-3, y+3,
                                           P['locator_root_z_mm']-.1,
-                                          P['locator_root_z_mm']+1.2)))
+                                          P['locator_root_z_mm']+max(1.2, P.get('access_feedback_update', {}).get('baseline_nub_height_mm', 1.2))+.05)))
             allowed = region if allowed is None else allowed+region
         if P.get('locator_release_recess_bounds_mm'):
             from prototype_feedback import release_recess_tool
             allowed = allowed+solid(mesh_shape(release_recess_tool()))
+        if P.get('access_feedback_update'):
+            from access_feedback import cutters as access_cutters, cuboid
+            for tool in access_cutters(P).values():
+                allowed += tool
+            # Documented cleanup of inherited numeric P11 seam slivers.
+            for sign in (-1, 1):
+                allowed += cuboid([[59,64] if sign>0 else [-64,-59],
+                                   [-29.101,-28.999],[-37,-25]])
+        if P.get('locator_release_profile'):
+            from access_feedback import cuboid
+            spec=P['locator_release_profile']
+            allowed += cuboid([[-28.02,28.02],[-48.01,-28.98],
+                                [spec['top_z_mm']-spec['drop_mm']-spec['backing_thickness_mm']-.01,2]])
+        if P.get('locator_rear_wall_removal'):
+            from locator_release_profile import rear_wall_tools
+            for tool in rear_wall_tools(P):
+                allowed += tool
+        if P.get('p11_upper_wall_relief'):
+            from locator_release_profile import p11_upper_wall_tools
+            for tool in p11_upper_wall_tools(P):
+                allowed += tool
         # Later authorized cleanup also moves P10 and removes internal ledges.
         if P.get('remove_internal_rim_lips'):
             from internal_rim_cleanup import cutters, inward_planes_from_mesh, front_wall_tools
@@ -63,17 +84,31 @@ def inspect(mount):
     for key in ('power_end_access_bounds_mm', 'display_access_bounds_mm'):
         (x0, x1), (y0, y1), (z0, z1) = P[key]
         probe = solid(mesh_shape(box(x0+.005, x1-.005, y0, y1, z0+.005, z1-.005)))
+        profiled_port = key == 'power_end_access_bounds_mm' and P.get('locator_release_profile')
+        if profiled_port:
+            from access_feedback import cuboid
+            half=P['locator_release_profile']['solid_half_width_mm']+.01
+            probe -= cuboid([[-half,half],[-48.01,-28.98],[-30,2]])
         overlap = abs(float((current^probe).volume()))
         assert overlap < .01, f'{key} is obstructed'
-        section = mount.section(plane_normal=[0, 1, 0], plane_origin=[0, (y0+y1)/2, 0])
-        polygons = [Polygon(loop[:, [0, 2]]).buffer(0) for loop in section.discrete]
-        desired = polygon_box(x0, z0, x1, z1)
-        aperture = min(polygons, key=lambda p: p.hausdorff_distance(desired))
-        error = aperture.hausdorff_distance(desired)
-        assert error < .005, f'{key} is not a complete rectangle'
+        error = None
+        if not profiled_port:
+            section = mount.section(plane_normal=[0, 1, 0], plane_origin=[0, (y0+y1)/2, 0])
+            polygons = [Polygon(loop[:, [0, 2]]).buffer(0) for loop in section.discrete]
+            desired = polygon_box(x0, z0, x1, z1)
+            aperture = min(polygons, key=lambda p: p.hausdorff_distance(desired))
+            error = aperture.hausdorff_distance(desired)
+            assert error < .005, f'{key} is not a complete rectangle'
         windows.append({'name': key, 'width_mm': x1-x0, 'height_mm': z1-z0,
-                        'profile_error_mm': float(error), 'overlap_mm3': overlap})
+                        'profile_error_mm': float(error) if error is not None else None,
+                        'central_solid_release_bridge': bool(profiled_port), 'overlap_mm3': overlap})
     result['access_windows'] = windows
+    if P.get('p11_upper_wall_relief'):
+        from locator_release_profile import p11_upper_wall_tools
+        obstruction = [abs(float((current^tool).volume())) for tool in p11_upper_wall_tools(P)]
+        assert max(obstruction)<.001, 'Upper P11 wall relief remains obstructed'
+        result['p11_upper_wall_relief'] = {'remaining_material_mm3': obstruction,
+                                         'corner_land_mm': P['p11_upper_wall_relief']['approximate_corner_land_mm']}
     if P.get('locator_release_recess_bounds_mm'):
         from prototype_feedback import release_recess_tool
         obstruction = abs(float((current^solid(mesh_shape(release_recess_tool()))).volume()))
@@ -87,14 +122,43 @@ def inspect(mount):
                 assert abs(heights[0]-floor) < .005, 'Incorrect finger recess depth'
                 thicknesses.append(float(heights[0]-heights[1]))
         assert min(thicknesses) > 2.38, 'Finger recess backing is too thin'
-        assert mount.contains([[-11,-35,-7], [11,-35,-7], [0,-38,-7]]).all(), 'Recess extends beyond its intended edges'
+        x0, x1 = P['locator_release_recess_bounds_mm'][0]
+        assert mount.contains([[x0-1,-35,-7], [x1+1,-35,-7], [0,-38,-7]]).all(), 'Recess extends beyond its intended edges'
         result['finger_release_recess'] = {
-            'width_mm': 20, 'inward_reach_from_edge_mm': 8,
+            'width_mm': x1-x0, 'inward_reach_from_edge_mm': 8,
             'depth_from_plate_mm': 2, 'corner_radius_mm': 3,
             'floor_fillet_mm': .8, 'obstruction_mm3': obstruction,
             'minimum_sampled_backing_thickness_mm': min(thicknesses),
             'position': 'X=0, at P19 power-port edge adjoining P11'}
+    if P.get('locator_release_profile'):
+        spec = P['locator_release_profile']
+        floor = spec['top_z_mm']-spec['drop_mm']
+        thicknesses = []
+        for x in (-8, 0, 8):
+            for y in (-46, -35, -31):
+                hits, _, _ = mount.ray.intersects_location([[x,y,2]], [[0,0,-1]], multiple_hits=True)
+                heights = sorted(hits[:,2], reverse=True)
+                assert abs(heights[0]-floor)<.005, 'Incorrect release profile drop'
+                thicknesses.append(float(heights[0]-heights[1]))
+        assert max(abs(t-spec['backing_thickness_mm']) for t in thicknesses)<.005
+        wall_thicknesses = []
+        if spec['style'] == 'thin_contoured_release_web':
+            for sign in (-1,1):
+                for z in (floor+5, floor+10):
+                    hits, _, _ = mount.ray.intersects_location([[0,-35,z]], [[sign,0,0]], multiple_hits=True)
+                    distances = sorted(abs(hits[:,0]))
+                    thickness = (distances[1]-distances[0])*np.cos(np.deg2rad(spec['draft_from_vertical_deg']))
+                    assert abs(thickness-spec['backing_thickness_mm'])<.005, 'Release web wall is too thick'
+                    wall_thicknesses.append(float(thickness))
+        result['locator_release_profile'] = {
+            'style': spec['style'], 'drop_mm': spec['drop_mm'],
+            'minimum_backing_mm': min(thicknesses), 'normal_wall_thicknesses_mm': wall_thicknesses}
     nubs = []
+    if P.get('locator_rear_wall_removal'):
+        from locator_release_profile import rear_wall_tools
+        obstruction = [abs(float((current^tool).volume())) for tool in rear_wall_tools(P)]
+        assert max(obstruction)<.001, 'A rear nub wall remains'
+        result['rear_nub_walls'] = {'removed': True, 'remaining_material_mm3': obstruction}
     fine = trimesh.load(ROOT/'cad/review/dish_step_precise_primary.stl', force='mesh')
     official = max(trimesh.load(ROOT/'docs/official/Starlink_Mini_Dish.stl').split(
         only_watertight=False), key=lambda p: len(p.faces))
@@ -226,6 +290,23 @@ def inspect(mount):
     # material, except where explicitly replaced by the access rectangles.
     prior = json.loads((OUT/'mount_v15_validation.json').read_text())
     tested = 0
+    release_channel_mesh = None
+    rear_wall_meshes = []
+    if P.get('locator_release_profile'):
+        from locator_release_profile import tools as release_profile_tools
+        _, _, channel = release_profile_tools(P)
+        raw = channel.to_mesh64()
+        release_channel_mesh = trimesh.Trimesh(raw.vert_properties[:, :3], raw.tri_verts, process=True)
+    if P.get('locator_rear_wall_removal'):
+        from locator_release_profile import rear_wall_tools
+        for tool in rear_wall_tools(P):
+            raw = tool.to_mesh64()
+            rear_wall_meshes.append(trimesh.Trimesh(raw.vert_properties[:, :3], raw.tri_verts, process=True))
+    if P.get('p11_upper_wall_relief'):
+        from locator_release_profile import p11_upper_wall_tools
+        for tool in p11_upper_wall_tools(P):
+            raw = tool.to_mesh64()
+            rear_wall_meshes.append(trimesh.Trimesh(raw.vert_properties[:, :3], raw.tri_verts, process=True))
     for pattern in prior['panel_patterns']:
         if 'validation_plane' not in pattern:
             continue
@@ -235,6 +316,14 @@ def inspect(mount):
             intentional = any(all(a-.01 <= coordinate <= b+.01
                                  for coordinate, (a, b) in zip(point, P[key]))
                               for key in ('power_end_access_bounds_mm', 'display_access_bounds_mm'))
+            if P.get('access_feedback_update'):
+                intentional |= (P.get('usb_cut_outer_x_mm', -115)-.01 <= point[0] <= -67+.01
+                                and P['battery_port_window_y_mm'][0]-.01 <= point[1] <= P['battery_port_window_y_mm'][1]+.01
+                                and P['battery_port_window_z_mm'][0]-.01 <= point[2] <= P['battery_port_window_z_mm'][1]+.01)
+            if release_channel_mesh is not None:
+                # The new functional release valley replaces these old cells.
+                intentional |= bool(release_channel_mesh.contains([point])[0])
+            intentional |= any(bool(tool.contains([point])[0]) for tool in rear_wall_meshes)
             if not intentional:
                 assert mount.contains([point])[0], 'An old side-wall cell remains open'
                 tested += 1

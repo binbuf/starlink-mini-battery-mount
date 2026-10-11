@@ -77,12 +77,12 @@
   "mating_clearance_axes_mm": 0.1,
   "battery_port_side": "-X",
   "battery_port_window_y_mm": [
-    -124.0,
+    -130.0,
     -62.0
   ],
   "battery_port_window_z_mm": [
     -30.4606,
-    -18.0
+    -12.0
   ],
   "mesh_tolerance_mm": 0.015,
   "print_nozzle_mm": 0.4,
@@ -118,9 +118,9 @@
       -19.4
     ]
   ],
-  "locator_tip_width_mm": 7.28,
-  "locator_tip_thickness_mm": 2.0,
-  "locator_height_mm": 4.35,
+  "locator_tip_width_mm": 7.348965517241379,
+  "locator_tip_thickness_mm": 2.1724137931034484,
+  "locator_height_mm": 3.5999999999999996,
   "locator_root_z_mm": -8.9606,
   "locator_base_thickness_mm": 3.0,
   "pattern_floor_only": true,
@@ -136,16 +136,16 @@
       -143.2
     ],
     [
-      -23.9,
-      -14.9
+      -27.9,
+      -10.9
     ]
   ],
   "locator_base_width_mm": 7.68,
   "locator_center_x_mm": 23.5533,
   "power_end_access_bounds_mm": [
     [
-      -49.5,
-      49.5
+      -54.0,
+      54.0
     ],
     [
       -33.25,
@@ -164,20 +164,7 @@
   "locator_root_support_height_mm": 1.1,
   "locator_root_support_span_mm": 2.5,
   "locator_root_support_style": "joined_short_ends_sloped_long_sides",
-  "locator_release_recess_bounds_mm": [
-    [
-      -10,
-      10
-    ],
-    [
-      -37,
-      -26
-    ],
-    [
-      -8.6106,
-      2
-    ]
-  ],
+  "locator_release_recess_bounds_mm": null,
   "remove_internal_rim_lips": true,
   "internal_rim_cleanup_outer_xy_mm": [
     [
@@ -627,5 +614,76 @@
       ]
     ],
     "central_half_width_mm": 72.4499
+  },
+  "access_feedback_update": {
+    "baseline_nub_height_mm": 4.35,
+    "nub_height_reduction_mm": 0.75,
+    "preserve_nub_sidewall_draft": true,
+    "usb_extension_direction": "-Y toward P10"
+  },
+  "locator_release_profile": {
+    "style": "thin_contoured_release_web",
+    "drop_mm": 15.0,
+    "flat_span_mm": 18.0,
+    "draft_from_vertical_deg": 15.0,
+    "lower_corner_radius_mm": 0.8,
+    "backing_thickness_mm": 2.4,
+    "top_z_mm": -6.610600000000001,
+    "solid_half_width_mm": 18.5,
+    "y_bounds_mm": [
+      -48.0,
+      -29.0
+    ],
+    "restore_old_recess_bounds_mm": [
+      [
+        -28.0,
+        28.0
+      ],
+      [
+        -37,
+        -26
+      ],
+      [
+        -8.6106,
+        2
+      ]
+    ],
+    "basis": "User OEM photograph: estimated 15 degree wall lean; retain user 15 mm drop and 18 mm flat span",
+    "replace_bounds_mm": [
+      [
+        -18.5,
+        18.5
+      ],
+      [
+        -48,
+        -29
+      ],
+      [
+        -26.02,
+        2
+      ]
+    ]
+  },
+  "locator_rear_wall_removal": {
+    "back_edge_y_mm": -48.0,
+    "corner_reach_mm": 1.0,
+    "side": "-Y behind both nubs",
+    "preserve_seat_floor": true,
+    "floor_trim_mm": 0.01
+  },
+  "p11_upper_wall_relief": {
+    "inner_x_mm": 18.5,
+    "outer_x_mm": 54.0,
+    "y_bounds_mm": [
+      -33.12,
+      -28.98
+    ],
+    "z_bounds_mm": [
+      -15.50001,
+      -11.0
+    ],
+    "end_radius_mm": 1.5,
+    "scope": "Upper P11 only; P19 plate and nubs preserved",
+    "approximate_corner_land_mm": 8.38
   }
 }
