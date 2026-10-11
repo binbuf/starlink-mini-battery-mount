@@ -8,7 +8,7 @@ A premium 3D printed stand mount for your Starlink Mini that cradles a USB power
 
 - Factory fit stand and battery mount combo
 - Hexagon venting across the visible panels for airflow
-- Custom bay for a USB battery / power bank (see below)
+- Custom bay for a USB power bank / battery (see below)
 - Access areas for the USB ports, LCD display, and power on/off button
 - Production model is tuned for ASA on a 0.4 mm nozzle, recommend PLA prototype variant for fit checks or faster printing
 - The mount is modeled in [CadQuery](https://cadquery.readthedocs.io/en/latest/)
@@ -40,12 +40,9 @@ Search for "starlink mini usb c to barrel jack 3ft" or check out the links below
 - https://www.amazon.com/dp/B0F62JD1Z4
 - https://www.amazon.com/NEDUL-Starlink-Waterproof-Compatible-Protocol/dp/B0DFH5DSPL
 
-### Power Bank
+### USB Power Bank
 
-This mount is made specifically for this power bank. This mount and battery are sized perfectly to
-fit behind the Mini and provide ample power to the unit (72Wh, ~3 hours average use). 
-
-This unit was picked based balancing quality, size, cost, and capacity.
+This mount is made specifically for this power bank:
 
 [UGREEN Nexode 100W 20000mAh Power Bank](https://www.amazon.com/dp/B0C3GTMX5M)
 
@@ -56,7 +53,15 @@ This unit was picked based balancing quality, size, cost, and capacity.
 - Size: 139 x 80.8 x 26.7 mm
 - Watt Hours: 72 Wh
 - USB ports: 2 USB-C, 1 USB-A
-- Passthrough charging: YES
+- Passthrough charging: **YES**
+
+The mount and battery are sized perfectly to fit behind the Mini and provide ample power to the unit (72Wh, ~3 hours average use). 
+
+This unit was picked based balancing quality, size, cost, and capacity.
+
+#### What if I want to use a different USB power bank?
+
+Scripts are included that produce the model and a Autodesk Fusion 360 *.f3d file are provided to make it easy to get started contributing to make changes such as battery bay size or overall dimensions/geometry. Don't forget to share your fork/remix!
 
 ## Renders
 
@@ -122,7 +127,7 @@ generated solid stays watertight and matches the mated geometry.
 
 ### Regenerating renders
 
-With Fusion running and its MCP add-in enabled, have the design open in curren tab and run
+With Fusion running and its MCP add-in enabled, have the design open in current tab. Run
 these commands from the project root:
 
 ```sh
