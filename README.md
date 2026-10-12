@@ -138,14 +138,15 @@ pip install Pillow
 python cad/render_readme.py
 ```
 
+
+
 ## License
 
-Released under the [MIT License](LICENSE).
+This project uses separate licenses for its software and hardware designs:
 
-You are free to use, copy, modify, merge, publish, distribute, sublicense and
-sell this software and its associated design files. The only requirement is
-that the copyright notice and permission notice are included in all copies or
-substantial portions. The software is provided "as is", without warranty of any
-kind.
+- **CAD-generation scripts and software:** MIT License (see [LICENSE-MIT](LICENSE-MIT))
+- **CAD designs and generated 3D models**, including STEP, STL, and 3MF files: CERN Open Hardware Licence Version 2 – Permissive (CERN-OHL-P-2.0; see [LICENSE](LICENSE))
 
-Copyright (c) 2026 binbuf.
+Commercial use, modification, redistribution, and manufacturing are permitted subject to the respective license terms.
+
+Copyright © 2026 binbuf.
