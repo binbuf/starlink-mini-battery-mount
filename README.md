@@ -138,7 +138,9 @@ pip install Pillow
 python cad/render_readme.py
 ```
 
+## Notice
 
+This is an independent, third-party accessory. Not affiliated with, authorized, endorsed by, or sponsored by SpaceX or Starlink. Starlink is a trademark of Space Exploration Technologies Corp. Product and brand names (including UGREEN and Nexode) are the property of their respective owners and are used for identification/compatibility purposes only.
 
 ## License
 
