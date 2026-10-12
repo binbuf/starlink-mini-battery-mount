@@ -2,7 +2,13 @@
 
 A premium 3D printed stand mount for your Starlink Mini that cradles a USB power bank.
 
-<img src="docs/images/render-07.png" alt="Assembled mount render 2" width="320">
+<table>
+  <tr>
+    <td><img src="docs/images/render-07.png" alt="Assembled mount render 2" width="320"></td>
+    <td><img src="docs/images/starlink-1.jpg" alt="Starlink Mini mount 1" width="160"></td>
+    <td><img src="docs/images/starlink-2.jpg" alt="Starlink Mini mount 2" width="160"></td>
+  </tr>
+</table>
 
 ## Features
 
