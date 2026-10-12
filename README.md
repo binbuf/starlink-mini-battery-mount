@@ -6,7 +6,6 @@ A premium 3D printed stand mount for your Starlink Mini that cradles a USB power
   <tr>
     <td><img src="docs/images/render-07.png" alt="Assembled mount render 2" width="320"></td>
     <td><img src="docs/images/starlink-1.jpg" alt="Starlink Mini mount 1" width="160"></td>
-    <td><img src="docs/images/starlink-2.jpg" alt="Starlink Mini mount 2" width="160"></td>
   </tr>
 </table>
 
@@ -69,7 +68,7 @@ This unit was picked based balancing quality, size, cost, and capacity.
 
 This project is built to be extendable. Scripts are included that produce the model and a Autodesk Fusion 360 *.f3d file are provided. This should make it easier to get started contributing. Changes such as battery bay size or overall dimensions/geometry are possible. If you do make something new share your fork/remix!
 
-## Renders
+## Renders & Images
 
 <table>
   <tr>
@@ -82,6 +81,11 @@ This project is built to be extendable. Scripts are included that produce the mo
     <td><img src="docs/images/render-05.png" alt="Enclosure with power bank render 2" width="320"></td>
     <td><img src="docs/images/render-06.png" alt="Assembled mount render 1" width="320"></td>
   </tr>
+  <tr>
+    <td><img src="docs/images/starlink-2.jpg" alt="Enclosure with power bank render 1" width="320"></td>
+    <td><img src="docs/images/starlink-3.jpg" alt="Enclosure with power bank render 2" width="320"></td>
+    <td></td>
+</tr>
 </table>
 
 ## Print
