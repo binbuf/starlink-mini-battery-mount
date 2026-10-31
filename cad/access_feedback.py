@@ -40,7 +40,11 @@ def cutters(parameters):
     for sign in (-1,1):
         x = sign*parameters['locator_center_x_mm']
         y = parameters['locator_center_y_mm']
-        result[f'nub_cap_{sign}'] = cuboid([[x-5,x+5],[y-3,y+3],[top,2]])
+        result[f'nub_cap_{sign}'] = cuboid([
+            [x-(parameters['locator_base_width_mm']/2+.5),
+             x+(parameters['locator_base_width_mm']/2+.5)],
+            [y-(parameters['locator_base_thickness_mm']/2+.5),
+             y+(parameters['locator_base_thickness_mm']/2+.5)], [top, 2]])
     return result
 
 

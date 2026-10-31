@@ -33,7 +33,7 @@ def run(revision='v1'):
     mesh = trimesh.util.concatenate(retained)
     prepared = mesh.copy()
     simplification_tolerance=0.0
-    if revision in ('v3','v4','v5','v6','v7','v8','v9','v10','v11','v13','v14','v15','v16','v17','v18'):
+    if revision in ('v3','v4','v5','v6','v7','v8','v9','v10','v11','v13','v14','v15','v16','v17','v18','v19'):
         # Mesh booleans can leave extremely narrow, nearly collinear facets at
         # the reference rim seam. Use Manifold's topology-preserving simplify
         # with a 0.00002 mm surface bound, then independently check deviation.

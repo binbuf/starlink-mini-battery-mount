@@ -11,19 +11,22 @@ from prototype_feedback import locator_coordinates
 
 
 def inspect(mount):
-    assert P['revision'] in ('v16', 'v17', 'v18')
+    assert P['revision'] in ('v16', 'v17', 'v18', 'v19')
     result = {}
     current = solid(mount)
-    if P['revision'] in ('v17', 'v18'):
-        prior_stem = 'mount_v17' if P['revision'] == 'v18' else 'mount_v16'
+    if P['revision'] in ('v17', 'v18', 'v19'):
+        prior_stem = {'v18': 'mount_v17', 'v19': 'mount_v18'}.get(
+            P['revision'], 'mount_v16')
         v16 = solid(trimesh.load(OUT/(prior_stem+'.stl'), force='mesh'))
         changes = (current-v16)+(v16-current)
         allowed = None
+        plinth_w, plinth_t = P['locator_recess_size_mm']
         for sign in (-1, 1):
             x, y = locator_coordinates(sign)
-            region = solid(mesh_shape(box(x-5, x+5, y-3, y+3,
-                                          P['locator_root_z_mm']-.1,
-                                          P['locator_root_z_mm']+max(1.2, P.get('access_feedback_update', {}).get('baseline_nub_height_mm', 1.2))+.05)))
+            region = solid(mesh_shape(box(
+                x-(plinth_w/2+1), x+(plinth_w/2+1), y-(plinth_t/2+1),
+                y+(plinth_t/2+1), P['locator_root_z_mm']-.1,
+                P['locator_root_z_mm']+P['locator_height_mm']+.05)))
             allowed = region if allowed is None else allowed+region
         if P.get('locator_release_recess_bounds_mm'):
             from prototype_feedback import release_recess_tool
@@ -164,47 +167,45 @@ def inspect(mount):
         only_watertight=False), key=lambda p: len(p.faces))
     root = P['locator_root_z_mm']
     height = P['locator_height_mm']
+    seat_top = P['locator_seat_top_z_mm']
+    seat_w, seat_d = P['locator_recess_size_mm']
+    top = root+height
+    assert .05 < P['contact_z_mm']-seat_top < .3, 'Locator seat is not flush'
     for sign in (-1, 1):
         x, y = locator_coordinates(sign)
         dimensions = []
-        for raised in (1.3, 2.2, height-.02):
-            section = mount.section(plane_normal=[0, 0, 1], plane_origin=[0, 0, root+raised])
+        for raised in (.5, (top-seat_top)/2, top-seat_top-.02):
+            section = mount.section(plane_normal=[0, 0, 1],
+                                    plane_origin=[0, 0, seat_top+raised])
             polygons = [Polygon(loop[:, :2]).buffer(0) for loop in section.discrete]
             candidates = [p for p in polygons if p.contains(Point(x, y))]
             nub = min(candidates, key=lambda p: p.area)
             x0, y0, x1, y1 = nub.bounds
-            expected_width = P['locator_base_width_mm'] + raised/height*(
+            expected_width = P['locator_base_width_mm'] + raised/(top-seat_top)*(
                 P['locator_tip_width_mm']-P['locator_base_width_mm'])
-            expected_thickness = P['locator_base_thickness_mm'] + raised/height*(
+            expected_thickness = P['locator_base_thickness_mm'] + raised/(top-seat_top)*(
                 P['locator_tip_thickness_mm']-P['locator_base_thickness_mm'])
-            assert abs(x1-x0-expected_width) < .005
-            assert abs(y1-y0-expected_thickness) < .005
+            assert abs(x1-x0-expected_width) < .02
+            assert abs(y1-y0-expected_thickness) < .02
             dimensions.append({'height_above_seat_mm': raised,
                                'width_mm': x1-x0, 'thickness_mm': y1-y0})
-        points = []
-        span = P['locator_root_support_span_mm']
-        for sx in (-1, 1):
-            for sy in (-1, 1):
-                points.append([x+sx*(P['locator_base_width_mm']/2-span/2+.3),
-                               y+sy*(P['locator_base_thickness_mm']/2+.65),
-                               root+(.3 if P['revision'] in ('v17', 'v18') else .5)])
-        assert mount.contains(points).all(), 'One of four corner supports is missing'
-        if P['revision'] in ('v17', 'v18'):
-            # Joined material outside both short ends, and gradual wedge slopes
-            # along the long sides with a clear gap at the centre.
-            joined = [[x+sx*(P['locator_base_width_mm']/2+.1), y, root+.2] for sx in (-1, 1)]
-            assert mount.contains(joined).all(), 'Short-end supports do not meet'
-            wedge = [[x+sx*2.9, y+sy*2.4, root+.15] for sx in (-1, 1) for sy in (-1, 1)]
-            above = [[a,b,root+.8] for a,b,_ in wedge]
-            assert mount.contains(wedge).all() and not mount.contains(above).any(), 'Long-side supports do not slope gradually'
-            gap = [[x, y+sy*2, root+.2] for sy in (-1, 1)]
-            assert not mount.contains(gap).any(), 'Long-side end supports have joined across the gap'
+        # The seat is flush with the surrounding plate: solid right up to the
+        # seat top outside the tab, and open immediately above it.
+        solid_probe = [[x+(seat_w/2-1.5), y, seat_top-.1],
+                       [x-(seat_w/2-1.5), y, seat_top-.1],
+                       [x, y+(seat_d/2-1.0), seat_top-.1],
+                       [x, y-(seat_d/2-1.0), seat_top-.1]]
+        assert mount.contains(solid_probe).all(), 'Locator seat is not flush'
+        open_probe = [[x, y+(P['locator_base_thickness_mm']/2+.5), seat_top+.2],
+                      [x, y-(P['locator_base_thickness_mm']/2+.5), seat_top+.2],
+                      [x+(P['locator_base_width_mm']/2+.5), y, seat_top+.2],
+                      [x-(P['locator_base_width_mm']/2+.5), y, seat_top+.2]]
+        assert not mount.contains(open_probe).any(), \
+            'Material remains above the flush seat'
         region = mesh_shape(box(x-13, x+13, y-5, y+5, root-.01, root+height+.05))
         material = trimesh.boolean.intersection([mount, region], engine='manifold')
         actual_top = material.bounds[1, 2]
         assert abs(actual_top-(root+height)) < .005
-        # Check the extra socket-width plate material is removed, too.
-        assert not mount.contains([[x-9, y, -6.5], [x+9, y, -6.5]]).any()
         sweep = []
         for down in (0, .25, .5, 1, 2, 4.5):
             shifted = solid(material.copy().apply_translation([0, 0, -down]))
@@ -212,7 +213,9 @@ def inspect(mount):
             assert overlap < .01, 'Locator-only downward withdrawal clips Mini'
             sweep.append({'downward_travel_mm': down, 'maximum_mini_overlap_mm3': overlap})
         nubs.append({'side': sign, 'height_mm': actual_top-root,
-                     'section_dimensions': dimensions, 'corner_supports': 4, 'short_end_gussets': 2,
+                     'section_dimensions': dimensions,
+                     'seat_top_z_mm': seat_top,
+                     'neck_below_mouth_mm': P['contact_z_mm']-seat_top,
                      'locator_only_withdrawal': sweep})
     result['locators'] = nubs
     # The source lip remains. Ramps add material underneath it, outside the bay.

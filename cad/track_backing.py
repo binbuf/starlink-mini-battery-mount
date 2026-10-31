@@ -4,7 +4,7 @@ import manifold3d as md
 import trimesh
 from build_design import P, box
 from generate_mount import mesh_shape
-from generate_mount_v3 import difference
+from generate_mount import difference
 
 
 def bounding_meshes():

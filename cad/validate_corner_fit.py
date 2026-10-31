@@ -86,7 +86,7 @@ def inspect(mount,fine,official,section_corners):
     interior=example_outline('interior').intersection(polygon_box(-100,-48,100,P['port_cut_y_mm']-.1))
     plate=prism(interior,-11,P['contact_z_mm']-.02)
     plate=plate.cut(dish).cut(dish.translate((0,0,-P['new_support_step_clearance_z_mm']))).clean()
-    if P.get('locator_profile') == 'oem_tapered':
+    if P.get('locator_profile') in ('oem_tapered', 'oem_relieved_stadium', 'oem_stadium'):
         from prototype_feedback import locator_seat_tools
         plate = plate.cut(*locator_seat_tools()).clean()
     expected_section=mesh_shape(plate).section(plane_normal=[0,0,1],plane_origin=[0,0,z])

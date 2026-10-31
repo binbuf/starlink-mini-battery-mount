@@ -59,17 +59,17 @@ def run():
     targets += [('clear_space_above_3mm_stop',mesh_shape(box(-65,65,front+.2,
                     front+P['battery_stop_thickness_mm']-.2,floor_top+3.05,-7))),
                 ('usb_slot_inner_access',mesh_shape(box(usb_probe_x,-67.1,usb_y0+2,usb_y1-2,-29.4,-19.1)))]
-    if P.get('revision') in ('v4','v5','v6','v7','v8','v9','v10','v11','v13','v14','v15','v16','v17','v18'):
+    if P.get('revision') in ('v4','v5','v6','v7','v8','v9','v10','v11','v13','v14','v15','v16','v17','v18','v19'):
         back=P['battery_center_xy_mm'][1]-P['bay_xy_mm'][1]/2
         targets += [('clear_space_above_low_rear_wall',mesh_shape(box(-65,65,
                     P['cage_rear_y_mm']+.3,back-.2,floor_top+3.05,-7))),
                     ('clear_space_above_low_positive_x_wall',mesh_shape(box(70.1,72.44,
-                    back+.2,(-65 if P['revision'] in ('v5','v6','v7','v8','v9','v10','v11','v13','v14','v15','v16','v17','v18') else front-.2),floor_top+3.05,-7)))]
-    if P['revision'] in ('v8','v9','v10','v11','v13','v14','v15','v16','v17','v18'):
-        ya,yb=(usb_y0+.2,usb_y1-.2) if P['revision'] in ('v9','v10','v11','v13','v14','v15','v16','v17','v18') else (back+.2,-65)
+                    back+.2,(-65 if P['revision'] in ('v5','v6','v7','v8','v9','v10','v11','v13','v14','v15','v16','v17','v18','v19') else front-.2),floor_top+3.05,-7)))]
+    if P['revision'] in ('v8','v9','v10','v11','v13','v14','v15','v16','v17','v18','v19'):
+        ya,yb=(usb_y0+.2,usb_y1-.2) if P['revision'] in ('v9','v10','v11','v13','v14','v15','v16','v17','v18','v19') else (back+.2,-65)
         targets += [('clear_space_above_low_negative_x_wall',mesh_shape(box(-72.44,-70.1,
                     ya,yb,floor_top+3.05,-7)))]
-    if P['revision'] in ('v6','v7','v8','v9','v10','v11','v13','v14','v15','v16','v17','v18'):
+    if P['revision'] in ('v6','v7','v8','v9','v10','v11','v13','v14','v15','v16','v17','v18','v19'):
         # Exclude the reference-derived front skirts; this volume covers the
         # unwanted v5 shelf outside the rear/left seating corner.
         shelf_probe=mesh_shape(box(-110,-72.71,P['cage_rear_y_mm'],-65,floor_top-3,-29.05))
@@ -82,7 +82,7 @@ def run():
                                       P['battery_port_window_y_mm'][0],floor_top-3,-7))
             shelf_probe=trimesh.boolean.difference([shelf_probe,permitted],engine='manifold')
         targets += [('removed_lower_left_shelf',shelf_probe)]
-    if P['revision'] in ('v7','v8','v9','v10','v11','v13','v14','v15','v16','v17','v18'):
+    if P['revision'] in ('v7','v8','v9','v10','v11','v13','v14','v15','v16','v17','v18','v19'):
         y0,y1=P['battery_port_window_y_mm'];z0,z1=P['battery_port_window_z_mm']
         targets += [('usb_full_rectangle_access',mesh_shape(box(-114,-67.1,
                     y0+.001,y1-.001,z0+.001,z1-.001)))]
@@ -147,7 +147,7 @@ def run():
                                   'minimum_web_mm':gap,'counts_by_radius_mm':counts}
     for radius,count in counts.items():
         assert count==sum(p['whole_hexagons'] for p in floor_patterns if p['radius_mm']==radius)
-    if P.get('revision') in ('v4','v5','v6','v7','v8','v9','v10','v11','v13','v14','v15','v16','v17','v18'):
+    if P.get('revision') in ('v4','v5','v6','v7','v8','v9','v10','v11','v13','v14','v15','v16','v17','v18','v19'):
         # The former slit lies at the power-port end, outside the USB aperture.
         # Horizontal rays through its lower band must meet the new skirt.
         rays=np.array([[-110,y,z] for y in np.linspace(-51,-33,19)
@@ -158,7 +158,7 @@ def run():
         assert len(hits)==len(rays),'Extra slit remains on the negative X side'
         assert mount.contains([[71.35,-93,floor_top+1.5],[0,-137.5,floor_top+1.5]]).all()
         data['negative_x_skirt_closed_band']={'ray_samples':len(rays),'material_hits':len(hits)}
-    if P.get('revision') in ('v5','v6','v7','v8','v9','v10','v11','v13','v14','v15','v16','v17','v18'):
+    if P.get('revision') in ('v5','v6','v7','v8','v9','v10','v11','v13','v14','v15','v16','v17','v18','v19'):
         rays[:,0]=110
         directions=np.tile([-1,0,0],(len(rays),1))
         points_hit,ray_ids,_=mount.ray.intersects_location(rays,directions,multiple_hits=True)
@@ -209,7 +209,7 @@ def run():
             assert np.max(np.abs(np.linalg.norm(edges,axis=1)-P['usb_fin_bridge_hex_radius_mm']))<.01
         data['delivered_left_fin_top_view']={'whole_visible_hexagons':len(pieces),
                                             'additional_non_hexagonal_gaps':0}
-    if P.get('revision') in ('v6','v7','v8','v9','v10','v11','v13','v14','v15','v16','v17','v18'):
+    if P.get('revision') in ('v6','v7','v8','v9','v10','v11','v13','v14','v15','v16','v17','v18','v19'):
         # Check the fin itself in its original inclined plane. A horizontal
         # shelf can cover a gap in projection, so a top-view shadow alone is
         # insufficient. Compare both actual fin silhouettes in the same plane.
@@ -255,7 +255,7 @@ def run():
             fin_data[label]={'whole_hexagons':len(holes),'all_regular_hexagons':True,
                              'outline_area_mm2':silhouettes[label].area}
         expected=silhouettes['right_mirrored']
-        if P['revision'] in ('v7','v8','v9','v10','v11','v13','v14','v15','v16','v17','v18'):
+        if P['revision'] in ('v7','v8','v9','v10','v11','v13','v14','v15','v16','v17','v18','v19'):
             # The only permitted fin-outline difference is the intentional
             # rectangular USB aperture. Compare its actual plane section.
             y0,y1=P['battery_port_window_y_mm'];z0,z1=P['battery_port_window_z_mm']
@@ -273,8 +273,8 @@ def run():
             fin_data['mirrored_outline_difference_mm2']=difference
         data['delivered_inclined_fin_sections']=fin_data
         data['usb_access']={'wall_slot_clear':True,'opening_width_mm':usb_y1-usb_y0,
-                            'full_outward_approach_clear':P['revision'] in ('v7','v8','v9','v10','v11','v13','v14','v15','v16','v17','v18')}
-        if P['revision'] in ('v8','v9','v10','v11','v13','v14','v15','v16','v17','v18'):
+                            'full_outward_approach_clear':P['revision'] in ('v7','v8','v9','v10','v11','v13','v14','v15','v16','v17','v18','v19')}
+        if P['revision'] in ('v8','v9','v10','v11','v13','v14','v15','v16','v17','v18','v19'):
             data['usb_access'].pop('wall_slot_clear')
             data['usb_access']['bay_wall_open_above_retaining_lip']=True
         if P['revision']=='v6':
@@ -310,10 +310,10 @@ def run():
         data['delivered_usb_rectangle']={'width_mm':y1-y0,'height_mm':z1-z0,
                                         'square_corners':True,'straight_edges':4,
                                         'frame_ray_samples':len(rays),'material_hits':len(hits)}
-    if P['revision'] in ('v8','v9','v10','v11','v13','v14','v15','v16','v17','v18'):
+    if P['revision'] in ('v8','v9','v10','v11','v13','v14','v15','v16','v17','v18','v19'):
         # The bay-side wall is now an open-top lip, not a closed slot. Check
         # its actual upper surface independently of the builder parameters.
-        ya,yb=(usb_y0+.5,usb_y1-.5) if P['revision'] in ('v9','v10','v11','v13','v14','v15','v16','v17','v18') else (back+.5,-65.5)
+        ya,yb=(usb_y0+.5,usb_y1-.5) if P['revision'] in ('v9','v10','v11','v13','v14','v15','v16','v17','v18','v19') else (back+.5,-65.5)
         ys=np.linspace(ya,yb,35)
         rays=np.array([[-71.35,y,floor_top-1] for y in ys])
         directions=np.tile([0,0,1],(len(rays),1))
@@ -333,7 +333,7 @@ def run():
             'max_height_error_mm':float(np.max(np.abs(actual-target_top))),
             'upper_wall_removed':True}
         audit['usb_aperture']['bay_wall_open_top']=True
-    if P['revision'] in ('v9','v10','v11','v13','v14','v15','v16','v17','v18'):
+    if P['revision'] in ('v9','v10','v11','v13','v14','v15','v16','v17','v18','v19'):
         yc=P['battery_center_xy_mm'][1]
         half=P['battery_mm'][1]/2
         inset=P['battery_port_edge_inset_mm']

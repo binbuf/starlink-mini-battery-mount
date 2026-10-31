@@ -1,5 +1,5 @@
 {
-  "revision": "v18",
+  "revision": "v19",
   "battery_mm": [
     134.0,
     82.0,
@@ -118,14 +118,16 @@
       -19.4
     ]
   ],
-  "locator_tip_width_mm": 7.348965517241379,
-  "locator_tip_thickness_mm": 2.1724137931034484,
-  "locator_height_mm": 3.5999999999999996,
+  "locator_tip_width_mm": 17.0,
+  "locator_tip_thickness_mm": 2.6,
+  "locator_height_mm": 3.96,
   "locator_root_z_mm": -8.9606,
-  "locator_base_thickness_mm": 3.0,
+  "locator_base_thickness_mm": 2.72,
   "pattern_floor_only": true,
-  "locator_center_y_mm": -43.1653,
-  "locator_profile": "oem_tapered",
+  "locator_center_y_mm": -43.1667,
+  "locator_profile": "oem_stadium",
+  "locator_seat_top_z_mm": -6.6106,
+  "locator_root_embed_mm": 0.1,
   "display_access_bounds_mm": [
     [
       -61.0,
@@ -140,8 +142,8 @@
       -10.9
     ]
   ],
-  "locator_base_width_mm": 7.68,
-  "locator_center_x_mm": 23.5533,
+  "locator_base_width_mm": 17.0,
+  "locator_center_x_mm": 23.607,
   "power_end_access_bounds_mm": [
     [
       -54.0,
@@ -161,9 +163,6 @@
     9.0
   ],
   "fin_lip_ramp_depth_mm": 0.0,
-  "locator_root_support_height_mm": 1.1,
-  "locator_root_support_span_mm": 2.5,
-  "locator_root_support_style": "joined_short_ends_sloped_long_sides",
   "locator_release_recess_bounds_mm": null,
   "remove_internal_rim_lips": true,
   "internal_rim_cleanup_outer_xy_mm": [

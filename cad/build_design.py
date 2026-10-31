@@ -32,7 +32,7 @@ def check(shape, name, one=True):
 
 
 def make_locator(dish, sign):
-    if P.get('locator_profile') == 'oem_tapered':
+    if P.get('locator_profile') in ('oem_tapered', 'oem_relieved_stadium', 'oem_stadium'):
         from prototype_feedback import tapered_locator
         return tapered_locator(dish, sign)
     # Capture the real drafted and blended cavity directly from official STEP.

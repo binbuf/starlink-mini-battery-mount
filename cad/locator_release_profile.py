@@ -24,10 +24,12 @@ def rear_wall_tools(parameters):
         return []
     width,depth=parameters['locator_recess_size_mm']
     end_y=parameters['locator_center_y_mm']-depth/2+spec['corner_reach_mm']
+    # Stop at the flush seat level: the locator area has no recess to open.
+    z=parameters.get('locator_seat_top_z_mm',parameters['locator_root_z_mm'])
     return [cuboid([[sign*parameters['locator_center_x_mm']-width/2,
                     sign*parameters['locator_center_x_mm']+width/2],
                    [spec['back_edge_y_mm']-.02,end_y],
-                   [parameters['locator_root_z_mm']-spec.get('floor_trim_mm',0),2]]) for sign in (-1,1)]
+                   [z-spec.get('floor_trim_mm',0),2]]) for sign in (-1,1)]
 
 
 def p11_upper_wall_tools(parameters):
@@ -100,9 +102,10 @@ def apply(shape,parameters):
     shape=(shape+restore+backing)-channel
     # New solid backing must not fill the existing relieved nub seats.
     width,depth=parameters['locator_recess_size_mm']
+    seat_top=parameters.get('locator_seat_top_z_mm',parameters['locator_root_z_mm'])
     for sign in (-1,1):
         x=sign*parameters['locator_center_x_mm'];y=parameters['locator_center_y_mm']
-        z=parameters['locator_root_z_mm']
+        z=seat_top
         seat=(cq.Workplane('XY').box(width,depth,2-z)
               .translate((x,y,(z+2)/2)).edges('|Z').fillet(1).val())
         shape -= mesh_solid(seat,parameters['mesh_tolerance_mm'])-original

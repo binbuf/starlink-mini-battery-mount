@@ -1,4 +1,10 @@
-"""OEM-sized tapered nubs, root reliefs, access windows and printable lip ramps."""
+"""Reinforced OEM-style locator: slot-filling tab on a flush seat.
+
+The tab fills most of the Mini's kickstand slot (19.31 x 3.12 x 2.00 mm) and
+rises straight out of the surrounding plate.  See docs/locator-tabs.md for the
+measurements and rationale.
+"""
+import math
 import cadquery as cq
 import numpy as np
 from shapely.geometry import Polygon
@@ -10,12 +16,18 @@ def locator_coordinates(sign):
 
 
 def locator_seat_tools():
-    root = P['locator_root_z_mm']
+    """Cut the seat area back to the level of the surrounding plate.
+
+    The seat is not a pocket: the cut stops at `locator_seat_top_z_mm`, which is
+    the top of the surrounding plate, so the tab rises from a flush surface with
+    a single step.
+    """
+    seat_top = P['locator_seat_top_z_mm']
     width, depth = P['locator_recess_size_mm']
     tools = []
     for sign in (-1, 1):
         x, y = locator_coordinates(sign)
-        shape = box(x-width/2, x+width/2, y-depth/2, y+depth/2, root, 2)
+        shape = box(x-width/2, x+width/2, y-depth/2, y+depth/2, seat_top, 2)
         tools.append(cq.Workplane('XY').newObject([shape]).edges('|Z').fillet(1).val())
     if P.get('locator_release_recess_bounds_mm'):
         tools.append(release_recess_tool())
@@ -30,42 +42,65 @@ def release_recess_tool():
             .edges('<Z').fillet(.8).val())
 
 
+def locator_section(z):
+    """Tab cross-section size at height z, measured from the flush seat."""
+    seat = P['locator_seat_top_z_mm']
+    top = P['locator_root_z_mm'] + P['locator_height_mm']
+    u = (z-seat)/(top-seat)
+    width = P['locator_base_width_mm']+u*(P['locator_tip_width_mm']-P['locator_base_width_mm'])
+    thickness = P['locator_base_thickness_mm']+u*(P['locator_tip_thickness_mm']-P['locator_base_thickness_mm'])
+    return width, thickness
+
+
+def locator_profile(width, thickness, segments=48):
+    """Stadium outline matching the rounded ends of the Mini's slot."""
+    radius = thickness/2
+    centre = width/2-radius
+    points = []
+    for cx, start in ((centre, -90), (-centre, 90)):
+        for index in range(segments):
+            angle = math.radians(start+180*index/(segments-1))
+            points.append((cx+radius*math.cos(angle), radius*math.sin(angle)))
+    return points
+
+
+def _loft(stations):
+    """Ruled loft through (z, x, y, outline) stations."""
+    wires = [cq.Wire.makePolygon([cq.Vector(x+px, y+py, z) for px, py in outline],
+                                 close=True)
+             for z, x, y, outline in stations]
+    solid = cq.Solid.makeLoft(wires, True)
+    if solid.Volume() < 0:
+        solid = cq.Solid.makeLoft(list(reversed(wires)), True)
+    assert solid.isValid() and solid.Volume() > 0
+    return solid
+
+
 def tapered_locator(dish, sign):
+    """Slot-filling tab grown from just inside the flush seat.
+
+    The root is buried `locator_root_embed_mm` below the seat so the union with
+    the plate is volumetric; a purely coplanar union leaves a thin downward
+    sliver at the tab base (it shows up as an overhang under the tab ends).
+    """
     x, y = locator_coordinates(sign)
-    root = P['locator_root_z_mm']
-    height = P['locator_height_mm']
-    width = P['locator_base_width_mm']
-    thickness = P['locator_base_thickness_mm']
-    # A small root overlap joins the remaining locator-plate backing.
-    nub = (cq.Workplane('XY', origin=(x, y, root-.05))
-           .rect(width, thickness).workplane(offset=.05).rect(width, thickness)
-           .workplane(offset=height)
-           .rect(P['locator_tip_width_mm'], P['locator_tip_thickness_mm'])
+    seat = P['locator_seat_top_z_mm']
+    base = seat-P['locator_root_embed_mm']
+    top = P['locator_root_z_mm']+P['locator_height_mm']
+    base_w, base_t = locator_section(base)
+
+    tab = (cq.Workplane('XY', origin=(x, y, base))
+           .slot2D(base_w, base_t, 0)
+           .workplane(offset=top-base)
+           .slot2D(P['locator_tip_width_mm'], P['locator_tip_thickness_mm'], 0)
            .loft(ruled=True).val())
-    span = P['locator_root_support_span_mm']
-    support_height = P['locator_root_support_height_mm']
-    # Each short end joins its two corner supports into one tapered gusset.
-    # The outer edges of the long sides rise gradually into the nub; the
-    # central gap between the two end gussets remains open on both long sides.
-    for sx in (-1, 1):
-        cx = x+sx*(width/2-span/2+.3)
-        local_width = width+support_height/height*(P['locator_tip_width_mm']-width)
-        local_thickness = thickness+support_height/height*(P['locator_tip_thickness_mm']-thickness)
-        inner = x+sx*(width/2-span+.3)
-        outer = x+sx*local_width/2
-        upper_centre = (inner+outer)/2
-        pad = (cq.Workplane('XY', origin=(cx, y, root-.05))
-               .rect(span, thickness+span)
-               .workplane(offset=.05).rect(span, thickness+span)
-               .workplane(offset=support_height)
-               .center(upper_centre-cx, 0)
-               .rect(abs(outer-inner), local_thickness)
-               .loft(ruled=True).val())
-        nub = nub.fuse(pad)
-    nub = nub.clean()
-    assert nub.isValid() and len(nub.Solids()) == 1
-    assert abs(nub.intersect(dish).Volume()) < 1e-5, 'OEM-style locator clips Mini'
-    return nub
+
+    assert tab.isValid() and len(tab.Solids()) == 1
+    assert abs(tab.intersect(dish).Volume()) < 1e-5, 'Locator clips the Mini'
+    # Sanity: the engaged section must stay a real slot-filling tab.
+    section = Polygon(locator_profile(*locator_section(P['contact_z_mm'])))
+    assert section.is_valid and section.area > 35, 'Locator section collapsed'
+    return tab
 
 
 def access_window_tools():
